@@ -1,32 +1,78 @@
-- name: Update App Name from Gradle Project Name
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Install ImageMagick
         run: |
-          PROJECT_NAME=""
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
 
-          # Extract project name from settings files using sed
-          if [ -f "settings.gradle.kts" ]; then
-            PROJECT_NAME=$(sed -n 's/.*rootProject\.name\s*=\s*"\([^"]*\)".*/\1/p' settings.gradle.kts)
-          elif [ -f "settings.gradle" ]; then
-            PROJECT_NAME=$(sed -n "s/.*rootProject\.name\s*=\s*['\"]\([^'\"]*\)['\"].*/\1/p" settings.gradle)
+      - name: Generate App Icons from logo.png
+        run: |
+          if [ ! -f "logo.png" ]; then
+            echo "Error: logo.png not found in root directory!"
+            exit 1
           fi
 
-          # Fallback to repo folder name
-          if [ -z "$PROJECT_NAME" ]; then
-            PROJECT_NAME="${GITHUB_REPOSITORY##*/}"
-          fi
+          RES_DIR="app/src/main/res"
 
-          echo "Setting application label to: $PROJECT_NAME"
+          mkdir -p $RES_DIR/mipmap-mdpi
+          mkdir -p $RES_DIR/mipmap-hdpi
+          mkdir -p $RES_DIR/mipmap-xhdpi
+          mkdir -p $RES_DIR/mipmap-xxhdpi
+          mkdir -p $RES_DIR/mipmap-xxxhdpi
 
-          STRINGS_XML="app/src/main/res/values/strings.xml"
-          mkdir -p app/src/main/res/values
+          # Standard launcher icons
+          convert logo.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher.png
+          convert logo.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher.png
+          convert logo.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher.png
+          convert logo.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher.png
+          convert logo.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
 
-          if [ ! -f "$STRINGS_XML" ]; then
-            printf '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n</resources>\n' > "$STRINGS_XML"
-          fi
+          # Round launcher icon variants
+          convert logo.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher_round.png
+          convert logo.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher_round.png
+          convert logo.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
+          convert logo.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
+          convert logo.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
 
-          # Insert or replace app_name using xmlstarlet
-          if xmlstarlet sel -t -v "/resources/string[@name='app_name']" "$STRINGS_XML" > /dev/null 2>&1; then
-            xmlstarlet ed -L -u "/resources/string[@name='app_name']" -v "$PROJECT_NAME" "$STRINGS_XML"
-          else
-            xmlstarlet ed -L -s "/resources" -t elem -n "string" -v "$PROJECT_NAME" "$STRINGS_XML"
-            xmlstarlet ed -L -i "/resources/string[not(@name)]" -t attr -n "name" -v "app_name" "$STRINGS_XML"
-          fi
+      - name: Grant Execute Permission for Gradle Wrapper
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Build Unsigned Release APK
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload Unsigned Release APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-unsigned
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
