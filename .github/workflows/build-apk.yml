@@ -43,33 +43,27 @@ jobs:
           mkdir -p $RES_DIR/mipmap-xxxhdpi
 
           # Standard launcher icons
-          convert icon.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher.png
-          convert icon.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher.png
-          convert icon.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher.png
-          convert icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher.png
-          convert icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
+          magick icon.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher.png
+          magick icon.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher.png
+          magick icon.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher.png
+          magick icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher.png
+          magick icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
 
           # Round launcher icon variants
-          convert icon.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher_round.png
-          convert icon.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher_round.png
-          convert icon.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
-          convert icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
-          convert icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
+          magick icon.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher_round.png
+          magick icon.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher_round.png
+          magick icon.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
+          magick icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
+          magick icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
+
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: gradle assembleDebug --stacktrace
-
-      - name: Build Unsigned Release APK
-        run: gradle assembleRelease --stacktrace
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Upload Unsigned Release APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-unsigned
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
