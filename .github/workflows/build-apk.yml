@@ -43,18 +43,18 @@ jobs:
           mkdir -p $RES_DIR/mipmap-xxxhdpi
 
           # Standard launcher icons
-          magick icon.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher.png
-          magick icon.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher.png
-          magick icon.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher.png
-          magick icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher.png
-          magick icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
+          convert icon.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher.png
+          convert icon.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher.png
+          convert icon.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher.png
+          convert icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher.png
+          convert icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
 
           # Round launcher icon variants
-          magick icon.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher_round.png
-          magick icon.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher_round.png
-          magick icon.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
-          magick icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
-          magick icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
+          convert icon.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher_round.png
+          convert icon.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher_round.png
+          convert icon.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
+          convert icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
+          convert icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
 
       - name: Make Gradle Wrapper Executable
         run: chmod +x gradlew
