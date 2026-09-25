@@ -357,6 +357,7 @@ class TamagotchiViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun triggerHapticClick() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -368,6 +369,7 @@ class TamagotchiViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun triggerVibration(pattern: LongArray) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
