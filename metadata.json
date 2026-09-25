@@ -1,0 +1,6 @@
+{
+  "name": "PixelPet",
+  "description": "Retro 2D pixel-art Tamagotchi pet game with real-time stats decay, offline progression, evolution stages, and care mechanics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

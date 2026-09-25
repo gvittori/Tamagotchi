@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PixelPet</string>
+    <string name="notification_channel_name">Pet Care Reminders</string>
+    <string name="notification_channel_description">Alerts when your virtual pet needs food, play, or rest</string>
+</resources>
