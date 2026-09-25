@@ -56,14 +56,11 @@ jobs:
           convert icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
           convert icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
 
-      - name: Grant Execute Permission for Gradle Wrapper
-        run: chmod +x gradlew
-
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: gradle assembleDebug --stacktrace
 
       - name: Build Unsigned Release APK
-        run: ./gradlew assembleRelease --stacktrace
+        run: gradle assembleRelease --stacktrace
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
