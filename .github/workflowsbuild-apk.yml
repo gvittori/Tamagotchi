@@ -1,0 +1,76 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build web app
+        run: bun run build
+
+      - name: Set up Java JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Install Capacitor CLI & Assets Tool
+        run: bun add @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets
+
+      - name: Derive App Name & Package ID from GitHub Repo
+        id: metadata
+        run: |
+          # Extract repository name from 'owner/repo' (e.g., 'username/my-awesome-game' -> 'my-awesome-game')
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          
+          # Clean name for app title (removes dashes/underscores and capitalizes: 'my-awesome-game' -> 'MyAwesomeGame')
+          CLEAN_APP_NAME=$(echo "$REPO_NAME" | sed -E 's/[-_]+(.)/\U\1/g; s/^(.)/\U\1/')
+          
+          # Convert to lowercase for Java package identifier (e.g., 'com.app.myawesomegame')
+          PKG_NAME=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9')
+          
+          echo "APP_NAME=$CLEAN_APP_NAME" >> $GITHUB_ENV
+          echo "PKG_ID=com.app.$PKG_NAME" >> $GITHUB_ENV
+
+      - name: Initialize Capacitor & Add Android Platform
+        run: |
+          bunx cap init "${{ env.APP_NAME }}" "${{ env.PKG_ID }}" --web-dir dist || true
+          bunx cap add android || true
+          
+          # Check if icon.png exists in root folder before running asset generation
+          if [ -f "icon.png" ]; then
+            echo "icon.png found! Setting up assets directory..."
+            mkdir -p assets
+            cp icon.png assets/icon.png
+            bunx @capacitor/assets generate --android
+          else
+            echo "No icon.png found in root folder. Skipping custom icon generation."
+          fi
+          
+          bunx cap sync android
+
+      - name: Build APK via Gradle
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
