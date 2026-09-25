@@ -27,10 +27,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y imagemagick
 
-      - name: Generate App Icons from logo.png
+      - name: Generate App Icons from icon.png
         run: |
-          if [ ! -f "logo.png" ]; then
-            echo "Error: logo.png not found in root directory!"
+          if [ ! -f "icon.png" ]; then
+            echo "Error: icon.png not found in root directory!"
             exit 1
           fi
 
@@ -43,18 +43,18 @@ jobs:
           mkdir -p $RES_DIR/mipmap-xxxhdpi
 
           # Standard launcher icons
-          convert logo.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher.png
-          convert logo.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher.png
-          convert logo.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher.png
-          convert logo.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher.png
-          convert logo.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
+          convert icon.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher.png
+          convert icon.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher.png
+          convert icon.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher.png
+          convert icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher.png
+          convert icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
 
           # Round launcher icon variants
-          convert logo.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher_round.png
-          convert logo.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher_round.png
-          convert logo.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
-          convert logo.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
-          convert logo.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
+          convert icon.png -resize 48x48 $RES_DIR/mipmap-mdpi/ic_launcher_round.png
+          convert icon.png -resize 72x72 $RES_DIR/mipmap-hdpi/ic_launcher_round.png
+          convert icon.png -resize 96x96 $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
+          convert icon.png -resize 144x144 $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
+          convert icon.png -resize 192x192 $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
 
       - name: Grant Execute Permission for Gradle Wrapper
         run: chmod +x gradlew
