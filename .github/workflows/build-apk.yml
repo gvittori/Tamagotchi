@@ -1,5 +1,5 @@
 name: Build Android APK
- 
+
 on:
   push:
     branches: [ "main", "master" ]
@@ -48,11 +48,9 @@ jobs:
           mkdir -p app/src/main/res/values
 
           if [ ! -f "$STRINGS_XML" ]; then
-            cat << 'EOF' > "$STRINGS_XML"
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-</resources>
-EOF
+            echo '<?xml version="1.0" encoding="utf-8"?>' > "$STRINGS_XML"
+            echo '<resources>' >> "$STRINGS_XML"
+            echo '</resources>' >> "$STRINGS_XML"
           fi
 
           # Insert or replace app_name using xmlstarlet
